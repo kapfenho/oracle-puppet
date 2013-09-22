@@ -123,8 +123,8 @@ Contains Oracle Facter which displays the following
     ora_inst_patches_oracle_product_11.2_db Patches;14727310;
     ora_inst_products /oracle/product/11.2/db;
 
-templates.pp
-------------
+
+## templates.pp
 
 The databaseType value should contain only one of these choices.
 
@@ -132,9 +132,20 @@ The databaseType value should contain only one of these choices.
 - SE (Standard Edition)
 - SEONE (Standard Edition One)
 
+This version is an optimized one for local installation (without a puppet 
+master) - the local zip files are symlinked and then extracted.
+You need to change linking to copying.
 
-    $puppetDownloadMntPoint = "puppet:///modules/oradb/
-    # $puppetDownloadMntPoint = "puppet:///database/"
+<pre>
+  <code>
+# local version samples
+$puppetDownloadMntPoint = "/vagrant/files"
+
+# samples for puppet master
+$puppetDownloadMntPoint = "puppet:///database/"
+$puppetDownloadMntPointt = "puppet:///modules/oradb/
+  </code>
+</pre>
 
     oradb::installdb{ '12.1.0.1_Linux-x86-64':
        version                => '12.1.0.1',
