@@ -9,8 +9,7 @@ Should work for RedHat, CentOS, Ubuntu, Debian, Suse SLES or OracleLinux
 
 Works with Puppet 2.7 & 3.0
 
-Version updates
----------------
+## Version updates
 
 - 0.8.4 updated license to Apache 2.0
 - 0.8.3 support for extracted oracle software (shared storage) with zipExtract , RCU product value "all"    
@@ -27,8 +26,7 @@ Version updates
 - 0.7.2 bugfixes for rcu and database facts
 
 
-Oracle Database Features
----------------------------
+## Oracle Database Features
 
 - Oracle Database 12.1.0.1 Linux installation
 - Oracle Database 11.2.0.4 Linux installation
@@ -50,8 +48,8 @@ Coming in next release
 
 - Oracle Database 11.2.0.1 Linux Client installation
 
-Files
------
+### Files
+
 For 11.2.0.3 Download oracle database linux software from http://support.oracle.com
 Patch 10404530: 11.2.0.3.0 PATCH SET FOR ORACLE DATABASE SERVER
 and upload this to the files folder of the oradb puppet module
@@ -60,44 +58,52 @@ For 11.2.0.1 Download oracle database linux software from http://otn.oracle.com
 
 For 12.1.0.1 Download oracle database linux software from http://otn.oracle.com
 
-# database files of linux 12.1.0.1 ( otn.oracle.com )
-1361028723 Jun 27 23:38 linuxamd64_12c_database_1of2.zip
-1116527103 Jun 27 23:38 linuxamd64_12c_database_2of2.zip
+###  database files of linux 12.1.0.1 ( otn.oracle.com )
 
-# database files of linux 11.2.0.3 ( support.oracle.com )
-1358454646 Mar  9 17:31 p10404530_112030_Linux-x86-64_1of7.zip
-1142195302 Mar  9 17:47 p10404530_112030_Linux-x86-64_2of7.zip
- 979195792 Mar  9 18:01 p10404530_112030_Linux-x86-64_3of7.zip
- 659229728 Mar  9 18:11 p10404530_112030_Linux-x86-64_4of7.zip
- 616473105 Mar  9 18:19 p10404530_112030_Linux-x86-64_5of7.zip
- 479890040 Mar  9 18:26 p10404530_112030_Linux-x86-64_6of7.zip
- 113915106 Mar  9 18:28 p10404530_112030_Linux-x86-64_7of7.zip
+    1361028723 Jun 27 23:38 linuxamd64_12c_database_1of2.zip
+    1116527103 Jun 27 23:38 linuxamd64_12c_database_2of2.zip
 
-# database files of linux 11.2.0.4 ( support.oracle.com )
-1395582860 Aug 31 16:21 p13390677_112040_Linux-x86-64_1of7.zip
-1151304589 Aug 31 16:22 p13390677_112040_Linux-x86-64_2of7.zip
-1205251894 Aug 31 16:22 p13390677_112040_Linux-x86-64_3of7.zip
- 656026876 Aug 31 16:22 p13390677_112040_Linux-x86-64_4of7.zip
- 599170344 Aug 31 16:23 p13390677_112040_Linux-x86-64_5of7.zip
- 488372844 Aug 31 16:23 p13390677_112040_Linux-x86-64_6of7.zip
- 119521122 Aug 31 16:23 p13390677_112040_Linux-x86-64_7of7.zip
+### database files of linux 11.2.0.3 ( support.oracle.com )
 
-# database files of linux 11.2.0.1 ( otn.oracle.com )
- 1239269270 Mar 10 17:05 linux.x64_11gR2_database_1of2.zip
- 1111416131 Mar 10 17:17 linux.x64_11gR2_database_2of2.zip
+    1358454646 Mar  9 17:31 p10404530_112030_Linux-x86-64_1of7.zip
+    1142195302 Mar  9 17:47 p10404530_112030_Linux-x86-64_2of7.zip
+     979195792 Mar  9 18:01 p10404530_112030_Linux-x86-64_3of7.zip
+     659229728 Mar  9 18:11 p10404530_112030_Linux-x86-64_4of7.zip
+     616473105 Mar  9 18:19 p10404530_112030_Linux-x86-64_5of7.zip
+     479890040 Mar  9 18:26 p10404530_112030_Linux-x86-64_6of7.zip
+     113915106 Mar  9 18:28 p10404530_112030_Linux-x86-64_7of7.zip
 
-# opatch database patch for 11.2.0.3
-  25556377 Mar 10 12:48 p14727310_112030_Linux-x86-64.zip
+### database files of linux 11.2.0.4 ( support.oracle.com )
 
-# opatch upgrade
-  32551984 Jul  6 18:58 p6880880_112000_Linux-x86-64.zip
+    1395582860 Aug 31 16:21 p13390677_112040_Linux-x86-64_1of7.zip
+    1151304589 Aug 31 16:22 p13390677_112040_Linux-x86-64_2of7.zip
+    1205251894 Aug 31 16:22 p13390677_112040_Linux-x86-64_3of7.zip
+     656026876 Aug 31 16:22 p13390677_112040_Linux-x86-64_4of7.zip
+     599170344 Aug 31 16:23 p13390677_112040_Linux-x86-64_5of7.zip
+     488372844 Aug 31 16:23 p13390677_112040_Linux-x86-64_6of7.zip
+     119521122 Aug 31 16:23 p13390677_112040_Linux-x86-64_7of7.zip
 
-# database client linux 11.2.0.1 ( otn.oracle.com )
- 706187979 Mar 10 16:48 linux.x64_11gR2_client.zip
+### database files of linux 11.2.0.1 ( otn.oracle.com )
 
-# rcu linux installer
- 408989041 Mar 17 20:17 ofm_rcu_linux_11.1.1.6.0_disk1_1of1.zip
- 411498103 Apr  1 21:23 ofm_rcu_linux_11.1.1.7.0_32_disk1_1of1.zip
+    1239269270 Mar 10 17:05 linux.x64_11gR2_database_1of2.zip
+    1111416131 Mar 10 17:17 linux.x64_11gR2_database_2of2.zip
+
+### opatch database patch for 11.2.0.3
+
+      25556377 Mar 10 12:48 p14727310_112030_Linux-x86-64.zip
+
+### opatch upgrade
+
+      32551984 Jul  6 18:58 p6880880_112000_Linux-x86-64.zip
+
+### database client linux 11.2.0.1 ( otn.oracle.com )
+
+     706187979 Mar 10 16:48 linux.x64_11gR2_client.zip
+
+### rcu linux installer
+
+     408989041 Mar 17 20:17 ofm_rcu_linux_11.1.1.6.0_disk1_1of1.zip
+     411498103 Apr  1 21:23 ofm_rcu_linux_11.1.1.7.0_32_disk1_1of1.zip
 
 important support node
 [ID 1441282.1] Requirements for Installing Oracle 11gR2 RDBMS on RHEL6 or OL6 64-bit (x86-64)
