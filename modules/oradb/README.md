@@ -133,8 +133,8 @@ The databaseType value should contain only one of these choices.
 - SEONE (Standard Edition One)
 
 
-    # $puppetDownloadMntPoint = "puppet:///database/"
     $puppetDownloadMntPoint = "puppet:///modules/oradb/
+    # $puppetDownloadMntPoint = "puppet:///database/"
 
     oradb::installdb{ '12.1.0.1_Linux-x86-64':
        version                => '12.1.0.1',
