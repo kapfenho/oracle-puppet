@@ -51,13 +51,14 @@ define oradb::opatch( $oracleProductHome       = undef,
   # check if the opatch already is installed
   $found = opatch_exists($oracleProductHome,$patchId)
   if $found == undef {
-    $continue = true
+    $continue        = true
   } else {
     if ( $found ) {
-      $continue = false
+      notify {"oradb::opatch ${title} ${oracleProductHome} already exists":}
+      $continue      = false
     } else {
       notify {"oradb::opatch ${title} ${oracleProductHome} does not exists":}
-      $continue = true
+      $continue      = true
     }
   }
 
@@ -71,7 +72,8 @@ define oradb::opatch( $oracleProductHome       = undef,
     # the patch used by the opatch
     if ! defined(File["${path}/${patchFile}"]) {
       file { "${path}/${patchFile}":
-        source       => "${mountPoint}/${patchFile}",
+        ensure       => link,
+        target       => "${mountPoint}/${patchFile}",
       }
     }
 
@@ -88,11 +90,13 @@ define oradb::opatch( $oracleProductHome       = undef,
         if $ocmrf == true {
           exec { "exec opatch ux ocmrf ${title}":
             command  => "${oracleProductHome}/OPatch/${oPatchCommand} -ocmrf ${oracleProductHome}/OPatch/ocm.rsp -oh ${oracleProductHome} ${path}/${patchId}",
+            timeout  => 1800,
             require  => Exec["extract opatch ${patchFile} ${title}"],
           }
         } else {
           exec { "exec opatch ux ${title}":
             command  => "${oracleProductHome}/OPatch/${oPatchCommand} -oh ${oracleProductHome} ${path}/${patchId}",
+            timeout  => 1800,
             require  => Exec["extract opatch ${patchFile} ${title}"],
           }
         }

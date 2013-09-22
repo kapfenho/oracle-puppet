@@ -67,18 +67,20 @@ define oradb::opatchupgrade( $oracleHome              = undef,
   $installedVersion  = opatch_version($oracleHome)
 
   if $installedVersion == $opversion {
-    $continue = false
+    notify {"oradb::opatchupgrade ${installedVersion} already installed":}
+    $continue        = false
   } else {
     notify {"oradb::opatchupgrade ${installedVersion} installed - performing upgrade":}
-    $continue = true
+    $continue        = true
   }
 
   if ( $continue ) {
     if ! defined(File["${downloadDir}/${patchFile}"]) {
       file {"${downloadDir}/${patchFile}":
         path         => "${downloadDir}/${patchFile}",
-        ensure       => present,
-        source       => "${mountDir}/${patchFile}",
+        ensure       => link,
+        # source       => "${mountDir}/${patchFile}",
+        target       => "${mountDir}/${patchFile}",
         require      => File[$downloadDir],
         mode         => 0777,
       }
@@ -103,8 +105,8 @@ define oradb::opatchupgrade( $oracleHome              = undef,
           }
         }
       }
-      default: {
-        fail("Unrecognized operating system")
+      default: { 
+        fail("Unrecognized operating system") 
       }
     }
   }

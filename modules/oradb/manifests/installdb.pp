@@ -1,38 +1,44 @@
 # == Class: oradb::installdb
 #
 # The databaseType value should contain only one of these choices.
-# EE     : Enterprise Edition
-# SE     : Standard Edition
-# SEONE  : Standard Edition One
+#   EE     : Enterprise Edition
+#   SE     : Standard Edition
+#   SEONE  : Standard Edition One
+# 
+# The procedure will take the files from puppetDownloadMntPoint,
+# symlink it to downloadDir and extract it in dowloadDir.
+# Extracted versions won't be removed afterwards.
+#
+# Sample usage:
 #
 #    oradb::installdb{ '112030_Linux-x86-64':
-#            version      => '11.2.0.3',
-#            file         => 'p10404530_112030_Linux-x86-64',
-#            databaseType => 'SE',
-#            oracleBase   => '/oracle',
-#            oracleHome   => '/oracle/product/11.2/db',
-#            createUser   => 'true',
-#            user         => 'oracle',
-#            group        => 'dba',
-#            downloadDir  => '/install',
-#            zipExtract   => true,
+#      version                => '11.2.0.3',
+#      file                   => 'p10404530_112030_Linux-x86-64',
+#      databaseType           => 'EE',
+#      oracleBase             => '/appl/oracle',
+#      oracleHome             => '/appl/oracle/product/11.2/db',
+#      createUser             => true,
+#      user                   => 'oracle',
+#      group                  => 'dba',
+#      downloadDir            => '/install',
+#      zipExtract             => true,
+#      puppetDownloadMntPoint => '/vagrant/files',
 #    }
 #
 #    oradb::installdb{ '112010_Linux-x86-64':
-#            version      => '11.2.0.1',
-#            file         => 'linux.x64_11gR2_database',
-#            databaseType => 'SE',
-#            oracleBase   => '/oracle',
-#            oracleHome   => '/oracle/product/11.2/db',
-#            createUser   => 'true',
-#            user         => 'oracle',
-#            group        => 'dba',
-#            downloadDir  => '/install',
-#            zipExtract   => true,
+#      version      => '11.2.0.1',
+#      file         => 'linux.x64_11gR2_database',
+#      databaseType => 'SE',
+#      oracleBase   => '/oracle',
+#      oracleHome   => '/oracle/product/11.2/db',
+#      createUser   => 'true',
+#      user         => 'oracle',
+#      group        => 'dba',
+#      downloadDir  => '/install',
+#      zipExtract   => true,
 #    }
 #
-#
-#
+
 define oradb::installdb( $version                 = undef,
                          $file                    = undef,
                          $databaseType            = 'SE',
@@ -54,6 +60,7 @@ define oradb::installdb( $version                 = undef,
     $continue = true
   } else {
     if ( $found ) {
+      notify {"oradb::installdb ${oracleHome} already exists":}
       $continue = false
     } else {
       notify {"oradb::installdb ${oracleHome} does not exists":}
@@ -74,7 +81,7 @@ define oradb::installdb( $version                 = undef,
         }
         File {
           ensure      => present,
-          mode        => 0775,
+          mode        => '0775',
           owner       => $user,
           group       => $group,
         }
@@ -115,7 +122,7 @@ define oradb::installdb( $version                 = undef,
         }
       }
     }
-
+    
     if ! defined(File[$downloadDir]) {
       # check oracle install folder
       file { $downloadDir :
@@ -126,117 +133,47 @@ define oradb::installdb( $version                 = undef,
     }
 
     $path = $downloadDir
-
+    
     if ( $zipExtract ) {
-      # In $downloadDir, will Puppet extract the ZIP files or is this a pre-extracted directory structure.
+
+      # zip files are linked to install dir and then extracted. this can be 
+      # skipped too, if resource is not needed
+
       if $version == '12.1.0.1' {
-        # db file 1 installer zip
-        file { "${path}/${file}_1of2.zip":
-          source      => "${mountPoint}/${file}_1of2.zip",
-          require     => File[$downloadDir],
-        }
-        exec { "extract ${path}/${file}_1of2.zip":
-          command     => "unzip -o ${path}/${file}_1of2.zip -d ${path}/${file}",
-          require     => File["${path}/${file}_1of2.zip"],
-          creates     => "${path}/${file}/database/install/addLangs.sh",
-        }
-        # db file 2 installer zip
-        file { "${path}/${file}_2of2.zip":
-          source      => "${mountPoint}/${file}_2of2.zip",
-          require     => File["${path}/${file}_1of2.zip"],
-        }
-        exec { "extract ${path}/${file}_2of2.zip":
-          command     => "unzip -o ${path}/${file}_2of2.zip -d ${path}/${file}",
-          require     => [ File["${path}/${file}_2of2.zip"], Exec["extract ${path}/${file}_1of2.zip"], ],
-          creates     => "${path}/${file}/database/stage/Components/oracle.rdbms/12.1.0.1.0/1/DataFiles/filegroup19.6.1.jar",
-        }
+
+        file { "${path}/${file}_1of2.zip": ensure => link, target => "${mountPoint}/${file}_1of2.zip", require => File[$downloadDir]  }
+        file { "${path}/${file}_2of2.zip": ensure => link, target => "${mountPoint}/${file}_2of2.zip", require => File["${path}/${file}_1of2.zip"] }
+
+        exec { "extract ${path}/${file}_1of2.zip": command => "unzip -o ${path}/${file}_1of2.zip -d ${path}/${file}", require => File["${path}/${file}_1of7.zip"], }
+        exec { "extract ${path}/${file}_1of2.zip": command => "unzip -o ${path}/${file}_1of2.zip -d ${path}/${file}", require => File["${path}/${file}_1of7.zip"], }
       }
 
       if $version == '11.2.0.1' {
-        # db file 1 installer zip
-        file { "${path}/${file}_1of2.zip":
-          source      => "${mountPoint}/${file}_1of2.zip",
-          require     => File[$downloadDir],
-        }
-        exec { "extract ${path}/${file}_1of2.zip":
-          command     => "unzip -o ${path}/${file}_1of2.zip -d ${path}/${file}",
-          require     => File["${path}/${file}_1of2.zip"],
-        }
-        # db file 2 installer zip
-        file { "${path}/${file}_2of2.zip":
-          source      => "${mountPoint}/${file}_2of2.zip",
-          require     => File["${path}/${file}_1of2.zip"],
-        }
-        exec { "extract ${path}/${file}_2of2.zip":
-          command     => "unzip -o ${path}/${file}_2of2.zip -d ${path}/${file}",
-          require     => File["${path}/${file}_2of2.zip"],
-        }
+        
+        file { "${path}/${file}_1of2.zip": ensure => link, target => "${mountPoint}/${file}_1of2.zip", require => File[$downloadDir]  }
+        file { "${path}/${file}_2of2.zip": ensure => link, target => "${mountPoint}/${file}_2of2.zip", require => File["${path}/${file}_1of2.zip"] }
+
+        exec { "extract ${path}/${file}_1of2.zip": command => "unzip -o ${path}/${file}_1of2.zip -d ${path}/${file}", require => File["${path}/${file}_1of7.zip"], }
+        exec { "extract ${path}/${file}_1of2.zip": command => "unzip -o ${path}/${file}_1of2.zip -d ${path}/${file}", require => File["${path}/${file}_1of7.zip"], }
       }
 
       if ( $version == '11.2.0.3' or $version == '11.2.0.4' ) {
-        # db file 1 installer zip
-        file { "${path}/${file}_1of7.zip":
-          source      => "${mountPoint}/${file}_1of7.zip",
-          require     => File[$downloadDir],
-        }
-        exec { "extract ${path}/${file}_1of7.zip":
-          command     => "unzip -o ${path}/${file}_1of7.zip -d ${path}/${file}",
-          require     => File["${path}/${file}_1of7.zip"],
-        }
-        # db file 2 installer zip
-        file { "${path}/${file}_2of7.zip":
-          source      => "${mountPoint}/${file}_2of7.zip",
-          require     => File["${path}/${file}_1of7.zip"],
-        }
-        exec { "extract ${path}/${file}_2of7.zip":
-          command     => "unzip -o ${path}/${file}_2of7.zip -d ${path}/${file}",
-          require     => File["${path}/${file}_2of7.zip"],
-        }
-        # db file 3 installer zip
-        file { "${path}/${file}_3of7.zip":
-          source      => "${mountPoint}/${file}_3of7.zip",
-          require     => File["${path}/${file}_2of7.zip"],
-        }
-        exec { "extract ${path}/${file}_3of7.zip":
-          command     => "unzip -o ${path}/${file}_3of7.zip -d ${path}/${file}",
-          require     => File["${path}/${file}_3of7.zip"],
-        }
-        # db file 4 installer zip
-        file { "${path}/${file}_4of7.zip":
-          source      => "${mountPoint}/${file}_4of7.zip",
-          require     => File["${path}/${file}_3of7.zip"],
-        }
-        exec { "extract ${path}/${file}_4of7.zip":
-          command     => "unzip -o ${path}/${file}_4of7.zip -d ${path}/${file}",
-          require     => File["${path}/${file}_4of7.zip"],
-        }
-        # db file 5 installer zip
-        file { "${path}/${file}_5of7.zip":
-          source      => "${mountPoint}/${file}_5of7.zip",
-          require     => File["${path}/${file}_4of7.zip"],
-        }
-        exec { "extract ${path}/${file}_5of7.zip":
-          command     => "unzip -o ${path}/${file}_5of7.zip -d ${path}/${file}",
-          require     => File["${path}/${file}_5of7.zip"],
-        }
-        # db file 6 installer zip
-        file { "${path}/${file}_6of7.zip":
-          source      => "${mountPoint}/${file}_6of7.zip",
-          require     => File["${path}/${file}_5of7.zip"],
-        }
-        exec { "extract ${path}/${file}_6of7.zip":
-          command     => "unzip -o ${path}/${file}_6of7.zip -d ${path}/${file}",
-          require     => File["${path}/${file}_6of7.zip"],
-        }
-        # db file 7 installer zip
-        file { "${path}/${file}_7of7.zip":
-          source      => "${mountPoint}/${file}_7of7.zip",
-          require     => File["${path}/${file}_6of7.zip"],
-        }
-        exec { "extract ${path}/${file}_7of7.zip":
-          command     => "unzip -o ${path}/${file}_7of7.zip -d ${path}/${file}",
-          require     => File["${path}/${file}_7of7.zip"],
-        }
+
+        file { "${path}/${file}_1of7.zip": ensure => link, target => "${mountPoint}/${file}_1of7.zip", require => File[$downloadDir]  }
+        file { "${path}/${file}_2of7.zip": ensure => link, target => "${mountPoint}/${file}_2of7.zip", require => File["${path}/${file}_1of7.zip"] }
+        file { "${path}/${file}_3of7.zip": ensure => link, target => "${mountPoint}/${file}_3of7.zip", require => File["${path}/${file}_2of7.zip"] }
+        file { "${path}/${file}_4of7.zip": ensure => link, target => "${mountPoint}/${file}_4of7.zip", require => File["${path}/${file}_3of7.zip"] }
+        file { "${path}/${file}_5of7.zip": ensure => link, target => "${mountPoint}/${file}_5of7.zip", require => File["${path}/${file}_4of7.zip"] }
+        file { "${path}/${file}_6of7.zip": ensure => link, target => "${mountPoint}/${file}_6of7.zip", require => File["${path}/${file}_5of7.zip"] }
+        file { "${path}/${file}_7of7.zip": ensure => link, target => "${mountPoint}/${file}_7of7.zip", require => File["${path}/${file}_6of7.zip"] }
+
+        exec { "extract ${path}/${file}_1of7.zip": command => "unzip -o ${path}/${file}_1of7.zip -d ${path}/${file}", require => File["${path}/${file}_1of7.zip"], }
+        exec { "extract ${path}/${file}_2of7.zip": command => "unzip -o ${path}/${file}_2of7.zip -d ${path}/${file}", require => File["${path}/${file}_2of7.zip"], }
+        exec { "extract ${path}/${file}_3of7.zip": command => "unzip -o ${path}/${file}_3of7.zip -d ${path}/${file}", require => File["${path}/${file}_3of7.zip"], }
+        exec { "extract ${path}/${file}_4of7.zip": command => "unzip -o ${path}/${file}_4of7.zip -d ${path}/${file}", require => File["${path}/${file}_4of7.zip"], }
+        exec { "extract ${path}/${file}_5of7.zip": command => "unzip -o ${path}/${file}_5of7.zip -d ${path}/${file}", require => File["${path}/${file}_5of7.zip"], }
+        exec { "extract ${path}/${file}_6of7.zip": command => "unzip -o ${path}/${file}_6of7.zip -d ${path}/${file}", require => File["${path}/${file}_6of7.zip"], }
+        exec { "extract ${path}/${file}_7of7.zip": command => "unzip -o ${path}/${file}_7of7.zip -d ${path}/${file}", require => File["${path}/${file}_7of7.zip"], }
       }
     }
 
@@ -264,18 +201,22 @@ define oradb::installdb( $version                 = undef,
       }
     }
 
+    # le installation...
+
     if $version == '12.1.0.1' {
       if ( $zipExtract ) {
         # In $downloadDir, will Puppet extract the ZIP files or is this a pre-extracted directory structure.
         exec { "install oracle database ${title}":
           command     => "/bin/sh -c 'unset DISPLAY;${path}/${file}/database/runInstaller -silent -waitforcompletion -responseFile ${path}/db_install_${version}.rsp'",
-          require     => [File ["${oraInstPath}/oraInst.loc"],File["${path}/db_install_${version}.rsp"],Exec["extract ${path}/${file}_1of2.zip"],Exec["extract ${path}/${file}_2of2.zip"]],
+          require     => [File ["${oraInstPath}/oraInst.loc"],File["${path}/db_install_${version}.rsp"],Exec["extract ${path}/${file}_2of2.zip"]],
+          timeout     => 1800,
           creates     => $oracleHome,
         }
       } else {
         exec { "install oracle database ${title}":
           command     => "/bin/sh -c 'unset DISPLAY;${path}/${file}/database/runInstaller -silent -waitforcompletion -responseFile ${path}/db_install_${version}.rsp'",
           require     => [File ["${oraInstPath}/oraInst.loc"],File["${path}/db_install_${version}.rsp"]],
+          timeout     => 1800,
           creates     => $oracleHome,
         }
       }
@@ -285,14 +226,16 @@ define oradb::installdb( $version                 = undef,
       if ( $zipExtract ) {
         # In $downloadDir, will Puppet extract the ZIP files or is this a pre-extracted directory structure.
         exec { "install oracle database ${title}":
-          command     => "/bin/sh -c 'unset DISPLAY;${path}/${file}/database/runInstaller -silent -waitforcompletion -responseFile ${path}/db_install_${version}.rsp'",
-          require     => [File ["${oraInstPath}/oraInst.loc"],File["${path}/db_install_${version}.rsp"],Exec["extract ${path}/${file}_1of7.zip"],Exec["extract ${path}/${file}_7of7.zip"]],
+          command     => "/bin/sh -c 'unset DISPLAY;${path}/${file}/database/runInstaller -silent -waitforcompletion -responseFile ${path}/db_install_${version}.rsp; true'",
+          require     => [File ["${oraInstPath}/oraInst.loc"],File["${path}/db_install_${version}.rsp"],Exec["extract ${path}/${file}_7of7.zip"]],
+          timeout     => 1800,
           creates     => $oracleHome,
         }
       } else {
         exec { "install oracle database ${title}":
-          command     => "/bin/sh -c 'unset DISPLAY;${path}/${file}/database/runInstaller -silent -waitforcompletion -responseFile ${path}/db_install_${version}.rsp'",
+          command     => "/bin/sh -c 'unset DISPLAY;${path}/${file}/database/runInstaller -silent -waitforcompletion -responseFile ${path}/db_install_${version}.rsp; true'",
           require     => [File ["${oraInstPath}/oraInst.loc"],File["${path}/db_install_${version}.rsp"]],
+          timeout     => 1800,
           creates     => $oracleHome,
         }
       }
@@ -303,17 +246,21 @@ define oradb::installdb( $version                 = undef,
         # In $downloadDir, will Puppet extract the ZIP files or is this a pre-extracted directory structure.
         exec { "install oracle database ${title}":
           command     => "/bin/sh -c 'unset DISPLAY;${path}/${file}/database/runInstaller -silent -waitforcompletion -responseFile ${path}/db_install_${version}.rsp'",
-          require     => [File ["${oraInstPath}/oraInst.loc"],File["${path}/db_install_${version}.rsp"],Exec["extract ${path}/${file}_1of2.zip"],Exec["extract ${path}/${file}_2of2.zip"]],
+          require     => [File ["${oraInstPath}/oraInst.loc"],File["${path}/db_install_${version}.rsp"],Exec["extract ${path}/${file}_2of2.zip"]],
+          timeout     => 1800,
           creates     => $oracleHome,
         }
       } else {
         exec { "install oracle database ${title}":
           command     => "/bin/sh -c 'unset DISPLAY;${path}/${file}/database/runInstaller -silent -waitforcompletion -responseFile ${path}/db_install_${version}.rsp'",
           require     => [File ["${oraInstPath}/oraInst.loc"],File["${path}/db_install_${version}.rsp"]],
+          timeout     => 1800,
           creates     => $oracleHome,
         }
       }
     }
+
+    # le profile...
 
     if ! defined(File["/home/${user}/.bash_profile"]) {
       file { "/home/${user}/.bash_profile":
@@ -321,6 +268,8 @@ define oradb::installdb( $version                 = undef,
         content       => template("oradb/bash_profile.erb"),
       }
     }
+
+    # le root action...
 
     exec { "run root.sh script ${title}":
       command         => "${oracleHome}/root.sh",
