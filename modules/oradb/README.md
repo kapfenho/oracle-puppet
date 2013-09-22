@@ -1,5 +1,5 @@
 Oracle Database Linux puppet module
-=================================================
+===================================
 
 created by Edwin Biemond
 [biemond.blogspot.com](http://biemond.blogspot.com)
@@ -58,12 +58,12 @@ For 11.2.0.1 Download oracle database linux software from http://otn.oracle.com
 
 For 12.1.0.1 Download oracle database linux software from http://otn.oracle.com
 
-###  database files of linux 12.1.0.1 ( otn.oracle.com )
+### Database files of Linux 12.1.0.1 ( otn.oracle.com )
 
     1361028723 Jun 27 23:38 linuxamd64_12c_database_1of2.zip
     1116527103 Jun 27 23:38 linuxamd64_12c_database_2of2.zip
 
-### database files of linux 11.2.0.3 ( support.oracle.com )
+### Database files of Linux 11.2.0.3 ( support.oracle.com )
 
     1358454646 Mar  9 17:31 p10404530_112030_Linux-x86-64_1of7.zip
     1142195302 Mar  9 17:47 p10404530_112030_Linux-x86-64_2of7.zip
@@ -73,7 +73,7 @@ For 12.1.0.1 Download oracle database linux software from http://otn.oracle.com
      479890040 Mar  9 18:26 p10404530_112030_Linux-x86-64_6of7.zip
      113915106 Mar  9 18:28 p10404530_112030_Linux-x86-64_7of7.zip
 
-### database files of linux 11.2.0.4 ( support.oracle.com )
+### Database files of Linux 11.2.0.4 ( support.oracle.com )
 
     1395582860 Aug 31 16:21 p13390677_112040_Linux-x86-64_1of7.zip
     1151304589 Aug 31 16:22 p13390677_112040_Linux-x86-64_2of7.zip
@@ -83,37 +83,39 @@ For 12.1.0.1 Download oracle database linux software from http://otn.oracle.com
      488372844 Aug 31 16:23 p13390677_112040_Linux-x86-64_6of7.zip
      119521122 Aug 31 16:23 p13390677_112040_Linux-x86-64_7of7.zip
 
-### database files of linux 11.2.0.1 ( otn.oracle.com )
+### Database files of Linux 11.2.0.1 ( otn.oracle.com )
 
     1239269270 Mar 10 17:05 linux.x64_11gR2_database_1of2.zip
     1111416131 Mar 10 17:17 linux.x64_11gR2_database_2of2.zip
 
-### opatch database patch for 11.2.0.3
+### OPatch database patch for 11.2.0.3
 
       25556377 Mar 10 12:48 p14727310_112030_Linux-x86-64.zip
 
-### opatch upgrade
+### OPatch upgrade
 
       32551984 Jul  6 18:58 p6880880_112000_Linux-x86-64.zip
 
-### database client linux 11.2.0.1 ( otn.oracle.com )
+### Database client Linux 11.2.0.1 ( otn.oracle.com )
 
      706187979 Mar 10 16:48 linux.x64_11gR2_client.zip
 
-### rcu linux installer
+### RCU Linux installer
 
      408989041 Mar 17 20:17 ofm_rcu_linux_11.1.1.6.0_disk1_1of1.zip
      411498103 Apr  1 21:23 ofm_rcu_linux_11.1.1.7.0_32_disk1_1of1.zip
 
-important support node
-[ID 1441282.1] Requirements for Installing Oracle 11gR2 RDBMS on RHEL6 or OL6 64-bit (x86-64)
+Important support node:
+
+    [ID 1441282.1] Requirements for Installing Oracle 11gR2 RDBMS on RHEL6 or OL6 64-bit (x86-64)
 
 
-Oracle Database Facter
--------------------
+## Oracle Database Facter
+
 Contains Oracle Facter which displays the following
-- Oracle Software
-- Opatch patches
+
+- Oracle software
+- OPatch patches
 
 ### Example of the Oracle Database Facts
 
@@ -125,211 +127,210 @@ templates.pp
 ------------
 
 The databaseType value should contain only one of these choices.
-- EE     : Enterprise Edition
-- SE     : Standard Edition
-- SEONE  : Standard Edition One
+
+- EE (Enterprise Edition)
+- SE (Standard Edition)
+- SEONE (Standard Edition One)
 
 
+    # $puppetDownloadMntPoint = "puppet:///database/"
+    $puppetDownloadMntPoint = "puppet:///modules/oradb/
 
-     #$puppetDownloadMntPoint = "puppet:///database/"
-     $puppetDownloadMntPoint = "puppet:///modules/oradb/
-
-     oradb::installdb{ '12.1.0.1_Linux-x86-64':
-            version                => '12.1.0.1',
-            file                   => 'linuxamd64_12c_database',
-            databaseType           => 'SE',
-            oracleBase             => '/oracle',
-            oracleHome             => '/oracle/product/12.1/db',
-            createUser             => true,
-            user                   => 'oracle',
-            group                  => 'dba',
-            downloadDir            => '/data/install',
-            zipExtract             => true,
-            puppetDownloadMntPoint => $puppetDownloadMntPoint,
-     }
+    oradb::installdb{ '12.1.0.1_Linux-x86-64':
+       version                => '12.1.0.1',
+       file                   => 'linuxamd64_12c_database',
+       databaseType           => 'SE',
+       oracleBase             => '/oracle',
+       oracleHome             => '/oracle/product/12.1/db',
+       createUser             => true,
+       user                   => 'oracle',
+       group                  => 'dba',
+       downloadDir            => '/data/install',
+       zipExtract             => true,
+       puppetDownloadMntPoint => $puppetDownloadMntPoint,
+    }
 
 
 or with zipExtract ( does not download or extract , software is in /install/linuxamd64_12c_database )  
 
-     oradb::installdb{ '12.1.0.1_Linux-x86-64':
-            version                => '12.1.0.1',
-            file                   => 'linuxamd64_12c_database',
-            databaseType           => 'SE',
-            oracleBase             => '/oracle',
-            oracleHome             => '/oracle/product/12.1/db',
-            user                   => 'oracle',
-            group                  => 'dba',
-            createUser             => true,
-            downloadDir            => '/install',
-            zipExtract             => false,
-     }
+    oradb::installdb{ '12.1.0.1_Linux-x86-64':
+      version      => '12.1.0.1',
+      file         => 'linuxamd64_12c_database',
+      databaseType => 'SE',
+      oracleBase   => '/oracle',
+      oracleHome   => '/oracle/product/12.1/db',
+      user         => 'oracle',
+      group        => 'dba',
+      createUser   => true,
+      downloadDir  => '/install',
+      zipExtract   => false,
+    }
 
 or
 
     oradb::installdb{ '112040_Linux-x86-64':
-            version                => '11.2.0.4',
-            file                   => 'p13390677_112040_Linux-x86-64',
-            databaseType           => 'SE',
-            oracleBase             => '/oracle',
-            oracleHome             => '/oracle/product/11.2/db',
-            createUser             => true,
-            user                   => 'oracle',
-            group                  => 'dba',
-            downloadDir            => '/install',
-            zipExtract             => true,
-            puppetDownloadMntPoint => $puppetDownloadMntPoint,
+      version                => '11.2.0.4',
+      file                   => 'p13390677_112040_Linux-x86-64',
+      databaseType           => 'SE',
+      oracleBase             => '/oracle',
+      oracleHome             => '/oracle/product/11.2/db',
+      createUser             => true,
+      user                   => 'oracle',
+      group                  => 'dba',
+      downloadDir            => '/install',
+      zipExtract             => true,
+      puppetDownloadMntPoint => $puppetDownloadMntPoint,
     }
 
 or
 
-     oradb::installdb{ '112030_Linux-x86-64':
-            version                => '11.2.0.3',
-            file                   => 'p10404530_112030_Linux-x86-64',
-            databaseType           => 'SE',
-            oracleBase             => '/oracle',
-            oracleHome             => '/oracle/product/11.2/db',
-            createUser             => true,
-            user                   => 'oracle',
-            group                  => 'dba',
-            downloadDir            => '/install',
-            zipExtract             => true,
-            puppetDownloadMntPoint => $puppetDownloadMntPoint,
-     }
+    oradb::installdb{ '112030_Linux-x86-64':
+      version                => '11.2.0.3',
+      file                   => 'p10404530_112030_Linux-x86-64',
+      databaseType           => 'SE',
+      oracleBase             => '/oracle',
+      oracleHome             => '/oracle/product/11.2/db',
+      createUser             => true,
+      user                   => 'oracle',
+      group                  => 'dba',
+      downloadDir            => '/install',
+      zipExtract             => true,
+      puppetDownloadMntPoint => $puppetDownloadMntPoint,
+    }
 
 or
 
     oradb::installdb{ '112010_Linux-x86-64':
-            version      => '11.2.0.1',
-            file         => 'linux.x64_11gR2_database',
-            databaseType => 'SE',
-            oracleBase   => '/oracle',
-            oracleHome   => '/oracle/product/11.2/db',
-            createUser   => true,
-            user         => 'oracle',
-            group        => 'dba',
-            downloadDir  => '/install',
-            zipExtract   => true,
-     }
-
+      version      => '11.2.0.1',
+      file         => 'linux.x64_11gR2_database',
+      databaseType => 'SE',
+      oracleBase   => '/oracle',
+      oracleHome   => '/oracle/product/11.2/db',
+      createUser   => true,
+      user         => 'oracle',
+      group        => 'dba',
+      downloadDir  => '/install',
+      zipExtract   => true,
+    }
 
 other
 
-	    oradb::opatchupgrade{'112000_opatch_upgrade':
-	      oracleHome             => '/oracle/product/11.2/db',
-	      patchFile              => 'p6880880_112000_Linux-x86-64.zip',
-	      csiNumber              => '11111',
-	      supportId              => 'biemond@gmail.com',
-	      opversion              => '11.2.0.3.4',
-	      user                   => 'oracle',
-	      group                  => 'dba',
-	      downloadDir            => '/install',
-	      puppetDownloadMntPoint => $puppetDownloadMntPoint,
-	      require                =>  Oradb::Installdb['112030_Linux-x86-64'],
-	    }
+	  oradb::opatchupgrade{'112000_opatch_upgrade':
+	    oracleHome             => '/oracle/product/11.2/db',
+	    patchFile              => 'p6880880_112000_Linux-x86-64.zip',
+	    csiNumber              => '11111',
+	    supportId              => 'biemond@gmail.com',
+	    opversion              => '11.2.0.3.4',
+	    user                   => 'oracle',
+	    group                  => 'dba',
+	    downloadDir            => '/install',
+	    puppetDownloadMntPoint => $puppetDownloadMntPoint,
+	    require                =>  Oradb::Installdb['112030_Linux-x86-64'],
+	  }
 
 
-	   # for this example OPatch 14727310
-	   # the OPatch utility must be upgraded ( patch 6880880, see above)
-	   oradb::opatch{'14727310_db_patch':
-	     oracleProductHome      => '/oracle/product/11.2/db',
-	     patchId                => '14727310',
-	     patchFile              => 'p14727310_112030_Linux-x86-64.zip',
-	     user                   => 'oracle',
-	     group                  => 'dba',
-	     downloadDir            => '/install',
-	     ocmrf                  => true,
-	     require                => Oradb::Opatchupgrade['112000_opatch_upgrade'],
-	     puppetDownloadMntPoint => $puppetDownloadMntPoint,
-	   }
+	  # for this example OPatch 14727310
+	  # the OPatch utility must be upgraded ( patch 6880880, see above)
+	  oradb::opatch{'14727310_db_patch':
+	    oracleProductHome      => '/oracle/product/11.2/db',
+	    patchId                => '14727310',
+	    patchFile              => 'p14727310_112030_Linux-x86-64.zip',
+	    user                   => 'oracle',
+	    group                  => 'dba',
+	    downloadDir            => '/install',
+	    ocmrf                  => true,
+	    require                => Oradb::Opatchupgrade['112000_opatch_upgrade'],
+	    puppetDownloadMntPoint => $puppetDownloadMntPoint,
+	  }
 
-       oradb::net{ 'config net8':
-            oracleHome   => '/oracle/product/11.2/db',
-            version      => '11.2' or "12.1",
-            user         => 'oracle',
-            group        => 'dba',
-            downloadDir  => '/install',
-            require      => Oradb::Opatch['14727310_db_patch'],
-       }
+    oradb::net{ 'config net8':
+      oracleHome   => '/oracle/product/11.2/db',
+      version      => '11.2' or "12.1",
+      user         => 'oracle',
+      group        => 'dba',
+      downloadDir  => '/install',
+      require      => Oradb::Opatch['14727310_db_patch'],
+    }
 
-       oradb::listener{'stop listener':
-            oracleBase   => '/oracle',
-            oracleHome   => '/oracle/product/11.2/db',
-            user         => 'oracle',
-            group        => 'dba',
-            action       => 'start',
-            require      => Oradb::Net['config net8'],
-       }
+    oradb::listener{'stop listener':
+      oracleBase   => '/oracle',
+      oracleHome   => '/oracle/product/11.2/db',
+      user         => 'oracle',
+      group        => 'dba',
+      action       => 'start',
+      require      => Oradb::Net['config net8'],
+    }
 
-       oradb::listener{'start listener':
-            oracleBase   => '/oracle',
-            oracleHome   => '/oracle/product/11.2/db',
-            user         => 'oracle',
-            group        => 'dba',
-            action       => 'start',
-            require      => Oradb::Listener['stop listener'],
-       }
+    oradb::listener{'start listener':
+      oracleBase   => '/oracle',
+      oracleHome   => '/oracle/product/11.2/db',
+      user         => 'oracle',
+      group        => 'dba',
+      action       => 'start',
+      require      => Oradb::Listener['stop listener'],
+    }
 
-       oradb::database{ 'testDb_Create':
-                      oracleBase              => '/oracle',
-                      oracleHome              => '/oracle/product/11.2/db',
-                      version                 => '11.2' or "12.1",
-                      user                    => 'oracle',
-                      group                   => 'dba',
-                      downloadDir             => '/install',
-                      action                  => 'create',
-                      dbName                  => 'test',
-                      dbDomain                => 'oracle.com',
-                      sysPassword             => 'Welcome01',
-                      systemPassword          => 'Welcome01',
-                      dataFileDestination     => "/oracle/oradata",
-                      recoveryAreaDestination => "/oracle/flash_recovery_area",
-                      characterSet            => "AL32UTF8",
-                      nationalCharacterSet    => "UTF8",
-                      initParams              => "open_cursors=1000,processes=600,job_queue_processes=4",
-                      sampleSchema            => 'TRUE',
-                      memoryPercentage        => "40",
-                      memoryTotal             => "800",
-                      databaseType            => "MULTIPURPOSE",
-                      require                 => Oradb::Listener['start listener'],
-     }
+    oradb::database{ 'testDb_Create':
+      oracleBase              => '/oracle',
+      oracleHome              => '/oracle/product/11.2/db',
+      version                 => '11.2' or "12.1",
+      user                    => 'oracle',
+      group                   => 'dba',
+      downloadDir             => '/install',
+      action                  => 'create',
+      dbName                  => 'test',
+      dbDomain                => 'oracle.com',
+      sysPassword             => 'Welcome01',
+      systemPassword          => 'Welcome01',
+      dataFileDestination     => "/oracle/oradata",
+      recoveryAreaDestination => "/oracle/flash_recovery_area",
+      characterSet            => "AL32UTF8",
+      nationalCharacterSet    => "UTF8",
+      initParams              => "open_cursors=1000,processes=600,job_queue_processes=4",
+      sampleSchema            => 'TRUE',
+      memoryPercentage        => "40",
+      memoryTotal             => "800",
+      databaseType            => "MULTIPURPOSE",
+      require                 => Oradb::Listener['start listener'],
+    }
 
     oradb::dbactions{ 'stop testDb':
-                     oracleHome              => '/oracle/product/11.2/db',
-                     user                    => 'oracle',
-                     group                   => 'dba',
-                     action                  => 'stop',
-                     dbName                  => 'test',
-                     require                 => Oradb::Database['testDb'],
+      oracleHome => '/oracle/product/11.2/db',
+      user       => 'oracle',
+      group      => 'dba',
+      action     => 'stop',
+      dbName     => 'test',
+      require    => Oradb::Database['testDb'],
     }
 
     oradb::dbactions{ 'start testDb':
-                     oracleHome              => '/oracle/product/11.2/db',
-                     user                    => 'oracle',
-                     group                   => 'dba',
-                     action                  => 'start',
-                     dbName                  => 'test',
-                     require                 => Oradb::Dbactions['stop testDb'],
+      oracleHome  => '/oracle/product/11.2/db',
+      user        => 'oracle',
+      group       => 'dba',
+      action      => 'start',
+      dbName      => 'test',
+      require     => Oradb::Dbactions['stop testDb'],
     }
 
-	oradb::autostartdatabase{ 'autostart oracle':
-	                   oracleHome              => '/oracle/product/12.1/db',
-	                   user                    => 'oracle',
-	                   dbName                  => 'test',
-	                   require                 => Oradb::Dbactions['start testDb'],
-	}
+	  oradb::autostartdatabase{ 'autostart oracle':
+	    oracleHome  => '/oracle/product/12.1/db',
+	    user        => 'oracle',
+	    dbName      => 'test',
+	    require     => Oradb::Dbactions['start testDb'],
+    }
 
 
 
     oradb::database{ 'testDb_Delete':
-                      oracleBase              => '/oracle',
-                      oracleHome              => '/oracle/product/11.2/db',
-                      user                    => 'oracle',
-                      group                   => 'dba',
-                      downloadDir             => '/install',
-                      action                  => 'delete',
-                      dbName                  => 'test',
-                      sysPassword             => 'Welcome01',
-                      require                 => Oradb::Dbactions['start testDb'],
+      oracleBase  => '/oracle',
+      oracleHome  => '/oracle/product/11.2/db',
+      user        => 'oracle',
+      group       => 'dba',
+      downloadDir => '/install',
+      action      => 'delete',
+      dbName      => 'test',
+      sysPassword => 'Welcome01',
+      require     => Oradb::Dbactions['start testDb'],
     }
 
 	  case $operatingsystem {
